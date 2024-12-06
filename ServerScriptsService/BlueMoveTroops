@@ -1,0 +1,9 @@
+local rs = game:GetService("ReplicatedStorage")
+
+rs.TroopMoved.OnServerEvent:Connect(function(player, selectedTroopTargets, amount, mousePos)
+	for i = 1, amount, 1 do
+		local troop = game.Workspace:FindFirstChild(selectedTroopTargets[i])
+		local humanoid = troop.Humanoid
+		humanoid:MoveTo(Vector3.new(mousePos[1], 0.5, mousePos[2]))
+	end
+end)
