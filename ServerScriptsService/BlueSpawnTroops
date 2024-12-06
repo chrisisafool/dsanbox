@@ -1,0 +1,15 @@
+local ss = game:GetService("ServerStorage")
+local troops = ss.Troops
+local swordsman = troops.Swordsman
+local rs = game:GetService("ReplicatedStorage")
+local spawnEvent = rs.TroopSpawned
+local number = 1
+
+spawnEvent.OnServerEvent:Connect(function(player, spawnPos)
+	local newSwordsman = swordsman:Clone()
+	newSwordsman.Parent = game.Workspace
+	newSwordsman.Name = ("Swordsman"..number)
+	newSwordsman:SetPrimaryPartCFrame(CFrame.new(spawnPos[1], spawnPos[2], spawnPos[3]))
+	number = number + 1
+end)
+
