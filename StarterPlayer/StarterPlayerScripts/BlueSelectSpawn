@@ -1,0 +1,37 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local selectedSpawnerTargets = {}
+local rs = game:GetService("ReplicatedStorage")
+local spawnEvent = rs.TroopSpawned
+
+local function findValue(whichArray, itemName)
+	for currentIndex = 1, #whichArray do
+		if whichArray[currentIndex] == itemName then
+			return currentIndex
+		end
+	end
+end
+
+mouse.Button1Down:Connect(function()
+	if mouse.Target == nil then
+		--nothing
+	elseif mouse.Target:FindFirstChild("Selected") and mouse.Target:FindFirstChild("Selected").Value == false and mouse.Target:FindFirstChild("Type").Value == "Spawner" and player.TeamColor == BrickColor.new("Cyan") and mouse.Target:FindFirstChild("Team").Value == "Blue" then
+		mouse.Target:FindFirstChild("Selected").Value = true
+		table.insert(selectedSpawnerTargets, mouse.Target.Name)
+		mouse.Target:FindFirstChild("SelectionBox").Visible = true
+	elseif mouse.Target:FindFirstChild("Selected") and mouse.Target:FindFirstChild("Selected").Value == true then
+		mouse.Target:FindFirstChild("Selected").Value = false
+		local value = findValue(selectedSpawnerTargets, mouse.Target.Name)
+		table.remove(selectedSpawnerTargets, value)
+		mouse.Target:FindFirstChild("SelectionBox").Visible = false
+	end
+end)
+
+mouse.Button2Down:Connect(function()
+	if mouse.Target == nil then
+		--nothing
+	elseif mouse.Target:FindFirstChild("Selected") and mouse.Target:FindFirstChild("Selected").Value == true then
+		local spawnPos = {mouse.Target.Position.X, mouse.Target.Position.Y + 2, mouse.Target.Position.Z}
+		spawnEvent:FireServer(spawnPos)
+	end
+end)
