@@ -1,0 +1,47 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local selectedTroopTargets = {}
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("ReplicatedStorage")
+
+local function findValue(whichArray, itemName)
+	for currentIndex = 1, #whichArray do
+		if whichArray[currentIndex] == itemName then
+			return currentIndex
+		end
+	end
+end
+
+mouse.Button1Down:Connect(function()
+	if mouse.Target == nil then
+		--nothing
+	elseif mouse.Target.Parent:FindFirstChild("Selected") and mouse.Target.Parent:FindFirstChild("Selected").Value == false and mouse.Target.Parent:FindFirstChild("Type").Value == "Troop" and player.TeamColor == BrickColor.new("Cyan") and mouse.Target.Parent:FindFirstChild("Team").Value == "Blue" then
+		mouse.Target.Parent:FindFirstChild("Selected").Value = true
+		table.insert(selectedTroopTargets, mouse.Target.Parent.Name)
+		mouse.Target.Parent:FindFirstChild("SelectionBox").Visible = true
+	elseif mouse.Target.Parent:FindFirstChild("Selected") and mouse.Target.Parent:FindFirstChild("Selected").Value == true then
+		mouse.Target.Parent:FindFirstChild("Selected").Value = false
+		local value = findValue(selectedTroopTargets, mouse.Target.Parent.Name)
+		table.remove(selectedTroopTargets, value)
+		mouse.Target.Parent:FindFirstChild("SelectionBox").Visible = false
+	end
+end)
+
+mouse.Button1Down:Connect(function()
+	local amount = table.getn(selectedTroopTargets)
+	local mousePos = {mouse.Hit.X, mouse.Hit.Z}
+	rs.TroopMoved:FireServer(selectedTroopTargets, amount, mousePos)
+end)
+
+--[[mouse.Button1Down:Connect(function()
+	local amount = table.getn(selectedTroopTargets)
+	local mousePos = {mouse.Hit.X, mouse.Hit.Z}
+	for i = 1, amount, 1 do
+		wait()
+		if mouse.Target == selectedTroopTargets[i] then
+			--nothing
+		else
+			rs.TroopMoved:FireServer(selectedTroopTargets, amount, mousePos)
+		end
+	end
+end)--]]
